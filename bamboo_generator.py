@@ -23,21 +23,24 @@ class Bamboo:
         vert_seg = 11
 
         for z in range(0, self.segments):
-            low_height = z * self.height - z * self.height * self.ridge_height / 2
+            low_height = z * self.height - z * self.height * (self.ridge_height / 2 + random.uniform(-self.ridge_height / 20, self.ridge_height / 20))
+            waist = self.waist_size * random.uniform(0.98, 1.02)
+            ridge = self.ridge_size * random.uniform(0.98, 1.02)
+            radius = self.stalk_radius * random.uniform(0.98, 1.02)
 
             # Vertices
             for indexV in range(0, self.resolution):
-                x, y = self.stalk_radius * math.cos(math.radians(angle * indexV)), self.stalk_radius * math.sin(math.radians(angle * indexV))
+                x, y = radius * math.cos(math.radians(angle * indexV)), radius * math.sin(math.radians(angle * indexV))
                 verts.append((x, y, low_height))
                 verts.append((x, y, low_height + self.height * self.ridge_height / 4))
-                verts.append((x * self.waist_size, y * self.waist_size, low_height + self.height * self.ridge_height))
-                verts.append((x * self.waist_size**2, y * self.waist_size**2, low_height + self.height * self.ridge_height * 2))
-                verts.append((x * self.waist_size**2, y * self.waist_size**2, low_height + self.height * self.ridge_height * 3))
-                verts.append((x * self.waist_size, y * self.waist_size, low_height + self.height * self.ridge_height * 4))
+                verts.append((x * waist, y * waist, low_height + self.height * self.ridge_height))
+                verts.append((x * waist**2, y * waist**2, low_height + self.height * self.ridge_height * 2))
+                verts.append((x * waist**2, y * waist**2, low_height + self.height * self.ridge_height * 3))
+                verts.append((x * waist, y * waist, low_height + self.height * self.ridge_height * 4))
                 verts.append((x, y, low_height + self.height * self.ridge_height * 7))
                 verts.append((x, y, low_height + self.height * self.ridge_height * 7.55))
-                verts.append((x * self.ridge_size, y * self.ridge_size, low_height + self.height * self.ridge_height * 7.70))
-                verts.append((x * self.ridge_size, y * self.ridge_size, low_height + self.height * self.ridge_height * 7.85))
+                verts.append((x * ridge, y * ridge, low_height + self.height * self.ridge_height * 7.70))
+                verts.append((x * ridge, y * ridge, low_height + self.height * self.ridge_height * 7.85))
                 verts.append((x, y, low_height + self.height * self.ridge_height * 8))
 
             # Faces
@@ -58,10 +61,14 @@ class Bamboo:
                 faces.append(face)
         
         # Tilt
+        tilt = []
+        for h in range(0, self.segments):
+            tilt.append(self.tilt * random.uniform(0.99, 1.01))
         for i, vert in enumerate(verts):
             x, y, z = vert
-            x = x * math.cos(math.radians(self.tilt)) - z * math.sin(math.radians(self.tilt))
-            z = x * math.sin(math.radians(self.tilt)) + z * math.cos(math.radians(self.tilt))
+            seg = i // (vert_seg * self.resolution)
+            x = x * math.cos(math.radians(tilt[seg])) - z * math.sin(math.radians(tilt[seg]))
+            z = x * math.sin(math.radians(tilt[seg])) + z * math.cos(math.radians(tilt[seg]))
             verts[i] = (x, y, z)
 
         self.verts = verts
@@ -146,7 +153,7 @@ def register_properties():
     bpy.types.Scene.bamboo_ridge_size = bpy.props.FloatProperty(name="Ridge Size", default=1.05, min=1.01, max=1.2)
     bpy.types.Scene.bamboo_waist_size = bpy.props.FloatProperty(name="Waist Size", default=0.95, min=0.8, max=0.99)
     bpy.types.Scene.bamboo_height = bpy.props.FloatProperty(name="Height", default=5.0, min=0.2, max=10.0)
-    bpy.types.Scene.bamboo_tilt = bpy.props.FloatProperty(name="Tilt", default=5.0, min=0.0, max=30.0)
+    bpy.types.Scene.bamboo_tilt = bpy.props.FloatProperty(name="Tilt", default=5.0, min=0.0, max=20.0)
 
 
 classes = [BambooGenerator, BambooGeneratorPanel]
