@@ -153,7 +153,7 @@ def register_properties():
     bpy.types.Scene.bamboo_resolution = bpy.props.IntProperty(name="Resolution", default=32, min=16, max=64)
     bpy.types.Scene.bamboo_stalk_radius = bpy.props.FloatProperty(name="Stalk Radius", default=1, min=0.2, max=4.0)
     bpy.types.Scene.bamboo_ridge_size = bpy.props.FloatProperty(name="Ridge Size", default=1.03, min=1.01, max=1.1)
-    bpy.types.Scene.bamboo_waist_size = bpy.props.FloatProperty(name="Waist Size", default=0.95, min=0.8, max=0.99)
+    bpy.types.Scene.bamboo_waist_size = bpy.props.FloatProperty(name="Waist Size", default=0.95, min=0.90, max=0.99)
     bpy.types.Scene.bamboo_height = bpy.props.FloatProperty(name="Height", default=5.0, min=1, max=10.0)
     bpy.types.Scene.bamboo_tilt = bpy.props.FloatProperty(name="Tilt", default=1.0, min=0.0, max=3.0)
 
