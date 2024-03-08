@@ -4,6 +4,7 @@ from bpy.types import Operator
 import math
 import random
 
+
 class Bamboo:
     def __init__(self, segments, resolution, stalk_radius, ridge_size, waist_size, height, tilt):
         self.segments = segments
@@ -23,7 +24,8 @@ class Bamboo:
         vert_seg = 11
 
         for z in range(0, self.segments):
-            low_height = z * self.height - z * self.height * (self.ridge_height / 2 + random.uniform(-self.ridge_height / 20, self.ridge_height / 20))
+            low_height = z * self.height - z * self.height * (
+                        self.ridge_height / 2 + random.uniform(-self.ridge_height / 20, self.ridge_height / 20))
             waist = self.waist_size * random.uniform(0.98, 1.02)
             ridge = self.ridge_size * random.uniform(0.98, 1.02)
             radius = self.stalk_radius * random.uniform(0.98, 1.02)
@@ -34,8 +36,8 @@ class Bamboo:
                 verts.append((x, y, low_height))
                 verts.append((x, y, low_height + self.height * self.ridge_height / 4))
                 verts.append((x * waist, y * waist, low_height + self.height * self.ridge_height))
-                verts.append((x * waist**2, y * waist**2, low_height + self.height * self.ridge_height * 2))
-                verts.append((x * waist**2, y * waist**2, low_height + self.height * self.ridge_height * 3))
+                verts.append((x * waist ** 2, y * waist ** 2, low_height + self.height * self.ridge_height * 2))
+                verts.append((x * waist ** 2, y * waist ** 2, low_height + self.height * self.ridge_height * 3))
                 verts.append((x * waist, y * waist, low_height + self.height * self.ridge_height * 4))
                 verts.append((x, y, low_height + self.height * self.ridge_height * 7))
                 verts.append((x, y, low_height + self.height * self.ridge_height * 7.55))
@@ -59,7 +61,7 @@ class Bamboo:
                 d = (self.resolution - 1) * vert_seg + h + 1 + (z * vert_seg * self.resolution)
                 face = (a, b, c, d)
                 faces.append(face)
-        
+
         # Tilt
         tilt = []
         for h in range(0, self.segments):
@@ -74,6 +76,7 @@ class Bamboo:
         self.verts = verts
         self.faces = faces
 
+
 class BambooGenerator(Operator):
     bl_idname = "object.bamboo"
     bl_label = "Mesh"
@@ -85,7 +88,6 @@ class BambooGenerator(Operator):
         return True
 
     def execute(self, context):
-
         # Retrieve parameters from the scene
         segments = context.scene.bamboo_segments
         resolution = context.scene.bamboo_resolution
@@ -96,7 +98,7 @@ class BambooGenerator(Operator):
         tilt = context.scene.bamboo_tilt
 
         mesh_data = bpy.data.meshes.new("bamboo_mesh_data")
-		
+
         # Create bamboo object
         bamboo = Bamboo(segments, resolution, stalk_radius, ridge_size, waist_size, height, tilt)
         bamboo.genMeshData()
@@ -106,10 +108,10 @@ class BambooGenerator(Operator):
         # Subdivide
         bm = bmesh.new()
         bm.from_mesh(mesh_data)
-        bmesh.ops.subdivide_edges(bm, edges=bm.edges, smooth=1, cuts=1, use_grid_fill=True,)
+        bmesh.ops.subdivide_edges(bm, edges=bm.edges, smooth=1, cuts=1, use_grid_fill=True, )
         bm.to_mesh(mesh_data)
         mesh_data.update()
-		
+
         mesh_obj = bpy.data.objects.new("Bamboo", mesh_data)
 
         collection = bpy.context.collection
@@ -148,12 +150,12 @@ class BambooGeneratorPanel(bpy.types.Panel):
 # Register properties
 def register_properties():
     bpy.types.Scene.bamboo_segments = bpy.props.IntProperty(name="Segments", default=5, min=1, max=50)
-    bpy.types.Scene.bamboo_resolution = bpy.props.IntProperty(name="Resolution", default=12, min=4, max=64)
-    bpy.types.Scene.bamboo_stalk_radius = bpy.props.FloatProperty(name="Stalk Radius", default=0.5, min=0.2, max=2.0)
-    bpy.types.Scene.bamboo_ridge_size = bpy.props.FloatProperty(name="Ridge Size", default=1.05, min=1.01, max=1.2)
+    bpy.types.Scene.bamboo_resolution = bpy.props.IntProperty(name="Resolution", default=32, min=16, max=64)
+    bpy.types.Scene.bamboo_stalk_radius = bpy.props.FloatProperty(name="Stalk Radius", default=1, min=0.2, max=4.0)
+    bpy.types.Scene.bamboo_ridge_size = bpy.props.FloatProperty(name="Ridge Size", default=1.03, min=1.01, max=1.1)
     bpy.types.Scene.bamboo_waist_size = bpy.props.FloatProperty(name="Waist Size", default=0.95, min=0.8, max=0.99)
-    bpy.types.Scene.bamboo_height = bpy.props.FloatProperty(name="Height", default=5.0, min=0.2, max=10.0)
-    bpy.types.Scene.bamboo_tilt = bpy.props.FloatProperty(name="Tilt", default=5.0, min=0.0, max=20.0)
+    bpy.types.Scene.bamboo_height = bpy.props.FloatProperty(name="Height", default=5.0, min=1, max=10.0)
+    bpy.types.Scene.bamboo_tilt = bpy.props.FloatProperty(name="Tilt", default=1.0, min=0.0, max=3.0)
 
 
 classes = [BambooGenerator, BambooGeneratorPanel]
